@@ -18,5 +18,7 @@ def to_hp(sequence):
         else:
             result += "P"
     return result
-protein = input("Enter a protein: ")
-print(to_hp(protein))
+
+if __name__ == "__main__":
+    protein = input("Enter a protein: ")
+    print(to_hp(protein))

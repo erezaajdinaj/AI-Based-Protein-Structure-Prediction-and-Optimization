@@ -4,6 +4,7 @@ from hp_model import to_hp
 from movement_generator import build_coords
 from collision import is_valid
 from protein import draw
+from energy import energy
 
 
 def parse_args():
@@ -22,7 +23,7 @@ def main():
         print("Error:", error)
         return
 
-    moves = ["R"] * (len(hp) - 1)
+    moves = moves = ["R", "R", "U", "L", "L", "U", "R", "R"]
     coords = build_coords(moves)
 
     print("Sequence:", args.seq.upper())
@@ -34,8 +35,9 @@ def main():
     print("Valid:", valid)
 
     if valid:
-        draw(hp, coords)
-
+        e = energy(hp, coords)
+        print("Energy:", e)
+        draw(hp, coords, e)
 
 if __name__ == "__main__":
     main()

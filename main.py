@@ -1,5 +1,6 @@
 import argparse
-
+import random
+from local_moves import random_valid_structure
 from hp_model import to_hp
 from movement_generator import build_coords
 from collision import is_valid
@@ -17,13 +18,14 @@ def parse_args():
 
 def main():
     args = parse_args()
+    rng = random.Random(args.seed)
     try:
         hp = to_hp(args.seq)
     except ValueError as error:
         print("Error:", error)
         return
 
-    moves = moves = ["R", "R", "U", "L", "L", "U", "R", "R"]
+    moves = random_valid_structure(len(hp), rng)
     coords = build_coords(moves)
 
     print("Sequence:", args.seq.upper())

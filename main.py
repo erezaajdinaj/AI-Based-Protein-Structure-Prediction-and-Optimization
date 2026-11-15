@@ -1,11 +1,9 @@
 import argparse
-import random
-from local_moves import random_valid_structure
+
 from hp_model import to_hp
+from hill_climbing import hill_climbing
 from movement_generator import build_coords
-from collision import is_valid
 from protein import draw
-from energy import energy
 
 
 def parse_args():
@@ -18,28 +16,25 @@ def parse_args():
 
 def main():
     args = parse_args()
-    rng = random.Random(args.seed)
     try:
         hp = to_hp(args.seq)
     except ValueError as error:
         print("Error:", error)
         return
 
-    moves = random_valid_structure(len(hp), rng)
-    coords = build_coords(moves)
+    result = hill_climbing(hp, args.time_limit, args.seed)
+    coords = build_coords(result["moves"])
 
     print("Sequence:", args.seq.upper())
     print("HP:", hp)
     print("Length:", len(hp))
-    print("Time limit:", args.time_limit)
-    print("Seed:", args.seed)
-    valid = is_valid(coords)
-    print("Valid:", valid)
+    print("Energy:", result["energy"])
+    print("Explored:", result["explored"])
+    print("Valid:", result["valid"])
+    print("Invalid:", result["invalid"])
+    print("Time:", round(result["time"], 2))
+    draw(hp, coords, result["energy"])
 
-    if valid:
-        e = energy(hp, coords)
-        print("Energy:", e)
-        draw(hp, coords, e)
 
 if __name__ == "__main__":
     main()

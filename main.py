@@ -5,9 +5,9 @@ from hill_climbing import hill_climbing
 from beam_search import beam_search
 from movement_generator import build_coords
 from protein import draw
+from simulated_annealing import simulated_annealing
 
-
-ALGORITHMS = {"hill": hill_climbing, "beam": beam_search}
+ALGORITHMS = {"hill": hill_climbing, "beam": beam_search , "sa" : simulated_annealing}
 
 
 def parse_args():

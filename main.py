@@ -2,10 +2,12 @@ import argparse
 
 from hp_model import to_hp
 from hill_climbing import hill_climbing
+from beam_search import beam_search
 from movement_generator import build_coords
 from protein import draw
 
-ALGORITHMS = {"hill": hill_climbing}
+
+ALGORITHMS = {"hill": hill_climbing, "beam": beam_search}
 
 
 def parse_args():
@@ -42,6 +44,9 @@ def main():
     print("Explored:", result["explored"])
     print("Valid:", result["valid"])
     print("Invalid:", result["invalid"])
+    if "pruned" in result:
+        print("Pruned:", result["pruned"])
+        print("Final beam width:", result["width"])
     print("Time:", round(result["time"], 2))
     draw(hp, coords, result["energy"])
 

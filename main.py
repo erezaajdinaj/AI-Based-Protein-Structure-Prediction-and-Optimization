@@ -2,12 +2,18 @@ import argparse
 
 from hp_model import to_hp
 from hill_climbing import hill_climbing
+from simulated_annealing import simulated_annealing
+from genetic_algorithm import genetic_algorithm
 from beam_search import beam_search
 from movement_generator import build_coords
 from protein import draw
-from simulated_annealing import simulated_annealing
 
-ALGORITHMS = {"hill": hill_climbing, "beam": beam_search , "sa" : simulated_annealing}
+ALGORITHMS = {
+    "hill": hill_climbing,
+    "sa": simulated_annealing,
+    "ga": genetic_algorithm,
+    "beam": beam_search,
+}
 
 
 def parse_args():
@@ -47,6 +53,8 @@ def main():
     if "pruned" in result:
         print("Pruned:", result["pruned"])
         print("Final beam width:", result["width"])
+    if "generations" in result:
+        print("Generations:", result["generations"])
     print("Time:", round(result["time"], 2))
     draw(hp, coords, result["energy"])
 

@@ -8,13 +8,15 @@ from beam_search import beam_search
 
 TEST_SEQUENCES = {
     "10_Length": "HHPPHHPPHP",
-    "20_Length": "HHPPHHPPHHPPHHPPHHPP",
+    "20_Benchmark": "HPHPPHHPHPPHPHHPPHPH",
+    "24_Benchmark": "HHPPHPPHPPHPPHPPHPPHPPHH",
     "30_Length": "HHPPHHPPHHPPHHPPHHPPHHPPHHPPHH",
-    "36_Length": "PPPHHPPHHPPPPPHHHHHHHPPHHPPPPHHPPHPP",
-    "50_Length": "HHPPHHPPHHPPHHPPHHPPHHPPHHPPHHPPHHPPHHPPHHPPHHPPHH"
+    "36_Benchmark": "PPPHHPPHHPPPPPHHHHHHHPPHHPPPPHHPPHPP",
+    "48_Benchmark": "PPHPPHHPPHHPPPPPHHHHHHHHHHPPPPPPHHPPHHPPHPPHHHHH",
+    "50_Benchmark": "HHPHPHPHPHHHHPHPPPHPPPHPPPPHPPPHPPPHPHHHHPHPHPHPHH",
 }
 
-SEEDS = [1, 42, 100]
+SEEDS = [1, 2, 3, 4, 5]
 TIME_LIMIT = 20.0
 
 ALGORITHMS = [
@@ -25,17 +27,20 @@ ALGORITHMS = [
 ]
 
 
-def run_experiments(filename="experiment_results.csv"):
+def run_experiments(filename="experiment_results1.csv", history_filename="convergence_history.csv"):
     print("Starting experiments. This will take some time...")
 
-    with open(filename, mode="w", newline="") as file:
+    with open(filename, mode="w", newline="") as file, \
+            open(history_filename, mode="w", newline="") as history_file:
         writer = csv.writer(file)
+        history_writer = csv.writer(history_file)
         writer.writerow([
             "Sequence_Name", "Length", "Algorithm", "Seed",
             "Best_Energy", "Time_Sec", "Memory_MB",
             "Explored", "Valid", "Invalid",
             "Pruned", "Pruning_Percent", "Generations"
         ])
+        history_writer.writerow(["Sequence_Name", "Algorithm", "Seed", "Time_Sec", "Best_Energy"])
 
         for seq_name, seq in TEST_SEQUENCES.items():
             n = len(seq)
@@ -63,9 +68,8 @@ def run_experiments(filename="experiment_results.csv"):
                     generations = result.get("generations", 0)
 
                     pruning_percent = 0.0
-                    if pruned > 0:
-                        total_space_attempted = explored + pruned
-                        pruning_percent = (pruned / total_space_attempted) * 100
+                    if pruned > 0 and valid > 0:
+                        pruning_percent = (pruned / valid) * 100
 
                     writer.writerow([
                         seq_name, n, algo_name, seed,
@@ -74,9 +78,15 @@ def run_experiments(filename="experiment_results.csv"):
                         pruned, round(pruning_percent, 2), generations
                     ])
 
+                    for t, e in result.get("history", []):
+                        history_writer.writerow([seq_name, algo_name, seed, round(t, 3), e])
+
+                    file.flush()
+                    history_file.flush()
+
                     print(f" Done! (Energy: {energy}, RAM: {round(memory_mb, 2)} MB)")
 
-    print(f"\nExperiments completed! Data saved to '{filename}'.")
+    print(f"\nExperiments completed! Data saved to '{filename}' and '{history_filename}'.")
 
 
 if __name__ == "__main__":

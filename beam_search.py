@@ -27,6 +27,8 @@ def run_width(hp, width, rng, deadline, stats):
     for _ in range(len(hp) - 1):
         candidates = []
         for moves in beam:
+            if time.perf_counter() > deadline:
+                return None
             for letter in allowed_moves(moves):
                 new_moves = moves + [letter]
                 stats["explored"] += 1
@@ -35,7 +37,7 @@ def run_width(hp, width, rng, deadline, stats):
                     continue
                 stats["valid"] += 1
                 candidates.append((score(hp, new_moves), new_moves))
-        if not candidates or time.perf_counter() > deadline:
+        if not candidates:
             return None
         rng.shuffle(candidates)
         candidates.sort(key=lambda item: item[0])

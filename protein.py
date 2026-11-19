@@ -1,7 +1,7 @@
+import os
+
 import matplotlib.pyplot as plt
 
-#proteina = "HPHPPHH"
-#coords = [(0,0), (1,0), (2,0), (2,1), (1,1),(0,1), (0,2)]
 
 def contacts(seq, coords):
     pairs = []
@@ -14,7 +14,7 @@ def contacts(seq, coords):
     return pairs
 
 
-def draw(seq, coords, energy=None):
+def draw(seq, coords, energy=None, save_path=None, label=None, show=True):
     min_x = min(c[0] for c in coords)
     min_y = min(c[1] for c in coords)
     coords = [(x - min_x, y - min_y) for x, y in coords]
@@ -36,6 +36,22 @@ def draw(seq, coords, energy=None):
     ax.set_yticks(range(min(ys) - 1, max(ys) + 2))
     ax.grid(True)
     ax.set_aspect("equal")
+
+    parts = []
+    if label:
+        parts.append(label)
     if energy is not None:
-        ax.set_title(f"Energy = {energy}  (H-H contacts: {len(pairs)})")
-    plt.show()
+        parts.append(f"Energy = {energy}")
+    parts.append(f"H-H contacts: {len(pairs)}")
+    ax.set_title(" | ".join(parts))
+
+    fig.tight_layout()
+    if save_path:
+        folder = os.path.dirname(save_path)
+        if folder:
+            os.makedirs(folder, exist_ok=True)
+        fig.savefig(save_path, dpi=300, bbox_inches="tight")
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)

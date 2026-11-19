@@ -26,25 +26,26 @@ def hill_climbing(hp, time_limit=5.0, seed=None, max_stuck=200):
         candidate, bad = valid_neighbor(current_moves, rng)
         invalid += bad
         explored += bad
+
         if candidate == current_moves:
-            continue
-
-        explored += 1
-        valid += 1
-        candidate_energy = energy(hp, build_coords(candidate))
-
-        if candidate_energy < current_energy:
-            stuck = 0
-        else:
             stuck += 1
-        if candidate_energy <= current_energy:
-            current_moves = candidate
-            current_energy = candidate_energy
+        else:
+            explored += 1
+            valid += 1
+            candidate_energy = energy(hp, build_coords(candidate))
 
-        if current_energy < best_energy:
-            best_energy = current_energy
-            best_moves = list(current_moves)
-            history.append((time.perf_counter() - start, best_energy))
+            if candidate_energy < current_energy:
+                stuck = 0
+            else:
+                stuck += 1
+            if candidate_energy <= current_energy:
+                current_moves = candidate
+                current_energy = candidate_energy
+
+            if current_energy < best_energy:
+                best_energy = current_energy
+                best_moves = list(current_moves)
+                history.append((time.perf_counter() - start, best_energy))
 
         if stuck >= max_stuck:
             current_moves = random_valid_structure(n, rng)
@@ -52,6 +53,10 @@ def hill_climbing(hp, time_limit=5.0, seed=None, max_stuck=200):
             explored += 1
             valid += 1
             stuck = 0
+            if current_energy < best_energy:
+                best_energy = current_energy
+                best_moves = list(current_moves)
+                history.append((time.perf_counter() - start, best_energy))
 
     return {
         "moves": best_moves,

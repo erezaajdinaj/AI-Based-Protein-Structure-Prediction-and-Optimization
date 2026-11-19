@@ -1,4 +1,5 @@
 import argparse
+import tracemalloc
 
 from hp_model import to_hp
 from hill_climbing import hill_climbing
@@ -23,6 +24,8 @@ def parse_args():
     parser.add_argument("--algo", choices=list(ALGORITHMS), default="hill", help="algorithm")
     parser.add_argument("--time-limit", type=float, default=10.0, help="time budget in seconds")
     parser.add_argument("--seed", type=int, default=None, help="random seed")
+    parser.add_argument("--save", default=None, help="custom path for the figure (default: results folder)")
+    parser.add_argument("--no-show", action="store_true", help="save the figure without opening a window")
     return parser.parse_args()
 
 
@@ -40,7 +43,10 @@ def main():
             print("Error:", error)
             return
 
+    tracemalloc.start()
     result = ALGORITHMS[args.algo](hp, args.time_limit, args.seed)
+    current, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
     coords = build_coords(result["moves"])
 
     print("Algorithm:", args.algo)
@@ -56,7 +62,12 @@ def main():
     if "generations" in result:
         print("Generations:", result["generations"])
     print("Time:", round(result["time"], 2))
-    draw(hp, coords, result["energy"])
+    print("Memory (MB):", round(peak / (1024 * 1024), 2))
+
+    seed_text = "noseed" if args.seed is None else f"seed{args.seed}"
+    save_path = args.save or f"results/{args.algo}_{len(hp)}_{seed_text}_E{result['energy']}.png"
+    print("Figure saved to:", save_path)
+    draw(hp, coords, result["energy"], save_path, args.algo, not args.no_show)
 
 
 if __name__ == "__main__":

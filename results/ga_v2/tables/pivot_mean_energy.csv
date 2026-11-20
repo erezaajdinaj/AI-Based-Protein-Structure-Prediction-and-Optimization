@@ -1,0 +1,8 @@
+Sequence_Name,Hill_Climbing,Simulated_Annealing,Genetic_Algorithm,Beam_Search,GA_v2
+10_Length,-3.0,-3.0,-3.0,-3.0,-3.0
+20_Benchmark,-9.0,-8.6,-7.8,-9.0,-9.0
+24_Benchmark,-8.0,-8.4,-6.8,-9.0,-8.8
+30_Length,-13.4,-13.8,-11.8,-14.0,-14.0
+36_Benchmark,-11.2,-11.4,-9.2,-12.2,-11.6
+48_Benchmark,-15.8,-17.0,-15.8,-18.4,-17.8
+50_Benchmark,-14.8,-17.2,-14.0,-19.0,-18.8

@@ -15,9 +15,6 @@ def contacts(seq, coords):
 
 
 def draw(seq, coords, energy=None, save_path=None, label=None, show=True):
-    min_x = min(c[0] for c in coords)
-    min_y = min(c[1] for c in coords)
-    coords = [(x - min_x, y - min_y) for x, y in coords]
     xs = [c[0] for c in coords]
     ys = [c[1] for c in coords]
     pairs = contacts(seq, coords)

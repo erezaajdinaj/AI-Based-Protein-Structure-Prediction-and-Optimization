@@ -25,6 +25,10 @@ def parse_args():
     parser.add_argument("folder", help="folder with the CSV files, for example results/baseline")
     parser.add_argument("--results", default="experiment_results*.csv", help="pattern of the results file")
     parser.add_argument("--history", default="convergence_history*.csv", help="pattern of the history file")
+    parser.add_argument("--merge", nargs="*", default=[],
+                        help="other result folders added to the comparison, for example results/baseline")
+    parser.add_argument("--only", default=None,
+                        help="comma separated Algorithm names to keep, for example Genetic_Algorithm,GA_v2")
     parser.add_argument("--show", action="store_true", help="also open the figures in windows")
     return parser.parse_args()
 
@@ -52,6 +56,13 @@ def main():
 
     df = pd.read_csv(find_file(folder, args.results))
     hist = pd.read_csv(find_file(folder, args.history))
+    for other in args.merge:
+        df = pd.concat([df, pd.read_csv(find_file(other, args.results))], ignore_index=True)
+        hist = pd.concat([hist, pd.read_csv(find_file(other, args.history))], ignore_index=True)
+    if args.only:
+        keep = args.only.split(",")
+        df = df[df["Algorithm"].isin(keep)].copy()
+        hist = hist[hist["Algorithm"].isin(keep)].copy()
     print(len(df), "result rows,", len(hist), "history rows")
 
     time_limit = float(round(df["Time_Sec"].median()))

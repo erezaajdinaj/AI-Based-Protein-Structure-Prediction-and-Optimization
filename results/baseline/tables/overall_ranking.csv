@@ -1,0 +1,5 @@
+Algorithm,Mean_Gap,Optimum_Hits,Runs,Mean_Relative_Gap_Pct
+Hill_Climbing,3.44,5.0,25,18.39
+Simulated_Annealing,2.68,5.0,25,14.77
+Genetic_Algorithm,4.48,1.0,25,27.34
+Beam_Search,1.68,10.0,25,8.48

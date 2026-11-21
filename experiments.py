@@ -19,6 +19,7 @@ ALGORITHMS = {
     "Simulated_Annealing": ("simulated_annealing", "simulated_annealing"),
     "Genetic_Algorithm": ("genetic_algorithm", "genetic_algorithm"),
     "Beam_Search": ("beam_search", "beam_search"),
+    "Hybrid_Beam_SA": ("hybrid_beam_sa", "hybrid_beam_sa")
 }
 
 

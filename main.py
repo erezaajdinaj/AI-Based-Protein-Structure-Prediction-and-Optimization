@@ -3,6 +3,7 @@ import tracemalloc
 
 from hp_model import to_hp
 from hill_climbing import hill_climbing
+from hybrid_beam_sa import hybrid_beam_sa
 from simulated_annealing import simulated_annealing
 from genetic_algorithm import genetic_algorithm
 from beam_search import beam_search
@@ -14,6 +15,7 @@ ALGORITHMS = {
     "sa": simulated_annealing,
     "ga": genetic_algorithm,
     "beam": beam_search,
+    "hybrid": hybrid_beam_sa,
 }
 
 

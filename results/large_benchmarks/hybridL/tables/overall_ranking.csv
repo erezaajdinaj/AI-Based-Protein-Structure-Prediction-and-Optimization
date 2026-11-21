@@ -1,0 +1,6 @@
+Algorithm,Mean_Gap,Optimum_Hits,Runs,Mean_Relative_Gap_Pct
+Hill_Climbing,15.12,0.0,25,32.87
+Beam_v2,2.6,5.0,25,5.67
+GA_v2,9.76,0.0,25,20.98
+Hybrid_Beam_SA,2.6,5.0,25,5.64
+SA_v2,4.32,0.0,25,9.27

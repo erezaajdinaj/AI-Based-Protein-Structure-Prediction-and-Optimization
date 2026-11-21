@@ -1,0 +1,6 @@
+Sequence_Name,Beam_v2,GA_v2,Hill_Climbing,Hybrid_Beam_SA,SA_v2
+20_Benchmark,0.0,0.0,0.0,0.0,0.0
+24_Benchmark,0.0,0.2,1.0,0.0,0.0
+36_Benchmark,1.0,2.4,2.8,1.4,1.0
+48_Benchmark,2.0,5.2,7.2,1.8,1.8
+50_Benchmark,1.0,2.2,6.2,1.0,0.4

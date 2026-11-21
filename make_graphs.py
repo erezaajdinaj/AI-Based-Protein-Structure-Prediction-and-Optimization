@@ -11,7 +11,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-KNOWN_OPTIMA = {20: -9, 24: -9, 25: -8, 36: -14, 48: -23, 50: -21, 60: -36, 64: -42}
+KNOWN_OPTIMA = {
+    "20_Benchmark": -9,
+    "24_Benchmark": -9,
+    "36_Benchmark": -14,
+    "48_Benchmark": -23,
+    "50_Benchmark": -21,
+    "60_Benchmark": -36,
+    "64_Benchmark": -42,
+    "85_Benchmark": -53,
+    "100a_Benchmark": -50,
+    "100b_Benchmark": -48,
+}
 BASE_ORDER = ["Hill_Climbing", "Simulated_Annealing", "Genetic_Algorithm", "Beam_Search"]
 SHORT = {"Hill_Climbing": "Hill", "Simulated_Annealing": "SA",
          "Genetic_Algorithm": "GA", "Beam_Search": "Beam"}
@@ -72,8 +83,7 @@ def main():
     colors = {a: cmap(i % 10) for i, a in enumerate(algos)}
     markers = {a: MARKERS[i % len(MARKERS)] for i, a in enumerate(algos)}
 
-    is_benchmark = df["Sequence_Name"].str.contains("Benchmark")
-    df["Optimum"] = np.where(is_benchmark, df["Length"].map(KNOWN_OPTIMA), np.nan)
+    df["Optimum"] = df["Sequence_Name"].map(KNOWN_OPTIMA)
     df["Gap"] = df["Best_Energy"] - df["Optimum"]
     df["Hit"] = np.where(df["Optimum"].notna(), (df["Gap"] == 0).astype(float), np.nan)
     df["Invalid_Pct"] = df["Invalid"] / df["Explored"].where(df["Explored"] > 0) * 100
@@ -84,7 +94,8 @@ def main():
                         .max().rename("Time_To_Best").reset_index())
     df = df.merge(last_improvement, on=["Sequence_Name", "Algorithm", "Seed"], how="left")
 
-    seqs = (df.drop_duplicates("Sequence_Name").sort_values("Length")["Sequence_Name"].tolist())
+    seqs = (df.drop_duplicates("Sequence_Name")
+              .sort_values(["Length", "Sequence_Name"])["Sequence_Name"].tolist())
     n_seeds = int(df.groupby(["Sequence_Name", "Algorithm"]).size().max())
 
     def finish(fig, name):
@@ -139,11 +150,11 @@ def main():
 
     bench = df[df["Optimum"].notna()]
     if not bench.empty:
-        gap_mean = bench.pivot_table(index="Length", columns="Algorithm", values="Gap", aggfunc="mean")
-        gap_std = bench.pivot_table(index="Length", columns="Algorithm", values="Gap", aggfunc="std")
-        hits = bench.pivot_table(index="Length", columns="Algorithm", values="Hit", aggfunc="sum")
-        optimum = bench.groupby("Length")["Optimum"].first()
-        labels = [f"n={n}\nbest known {int(optimum[n])}" for n in gap_mean.index]
+        bench_seqs = [s for s in seqs if s in KNOWN_OPTIMA]
+        gap_mean = bench.pivot_table(index="Sequence_Name", columns="Algorithm", values="Gap", aggfunc="mean").reindex(bench_seqs)
+        gap_std = bench.pivot_table(index="Sequence_Name", columns="Algorithm", values="Gap", aggfunc="std").reindex(bench_seqs)
+        hits = bench.pivot_table(index="Sequence_Name", columns="Algorithm", values="Hit", aggfunc="sum").reindex(bench_seqs)
+        labels = [f"n={s.replace('_Benchmark', '')}\nbest known {KNOWN_OPTIMA[s]}" for s in bench_seqs]
         grouped_bar(gap_mean, gap_std, labels, "Gap to best known energy (0 = optimum)",
                     "Gap to the best known energy on benchmark sequences", "02_gap_to_optimum.png")
         grouped_bar(hits, None, labels, f"Runs reaching the best known energy (out of {n_seeds})",
@@ -170,11 +181,10 @@ def main():
             std = curves.std(axis=0)
             ax.plot(grid, mean, color=colors[algo], label=short(algo))
             ax.fill_between(grid, mean - std, mean + std, color=colors[algo], alpha=0.12)
-        length = int(df.loc[df["Sequence_Name"] == seq, "Length"].iloc[0])
         title = f"{seq}"
-        if "Benchmark" in seq and length in KNOWN_OPTIMA:
-            ax.axhline(KNOWN_OPTIMA[length], color="black", linestyle="--", linewidth=1)
-            title += f" (best known {KNOWN_OPTIMA[length]})"
+        if seq in KNOWN_OPTIMA:
+            ax.axhline(KNOWN_OPTIMA[seq], color="black", linestyle="--", linewidth=1)
+            title += f" (best known {KNOWN_OPTIMA[seq]})"
         ax.set_title(title)
         ax.set_xscale("symlog", linthresh=0.1)
         ax.set_xlim(0, time_limit)
@@ -225,11 +235,10 @@ def main():
             patch.set_facecolor(colors[algo])
             patch.set_alpha(0.5)
         ax.set_xticklabels([short(a) for a in algos])
-        length = int(df.loc[df["Sequence_Name"] == seq, "Length"].iloc[0])
         title = f"{seq}"
-        if "Benchmark" in seq and length in KNOWN_OPTIMA:
-            ax.axhline(KNOWN_OPTIMA[length], color="black", linestyle="--", linewidth=1)
-            title += f" (best known {KNOWN_OPTIMA[length]})"
+        if seq in KNOWN_OPTIMA:
+            ax.axhline(KNOWN_OPTIMA[seq], color="black", linestyle="--", linewidth=1)
+            title += f" (best known {KNOWN_OPTIMA[seq]})"
         ax.set_title(title)
         ax.set_ylabel("Best energy")
     for ax in list(axes.flat)[len(seqs):]:
@@ -261,7 +270,7 @@ def main():
         Mean_Invalid=("Invalid", "mean"),
         Invalid_Pct=("Invalid_Pct", "mean"),
         Pruning_Pct=("Pruning_Percent", "mean"),
-    ).round(2).reset_index().sort_values(["Length", "Algorithm"])
+    ).round(2).reset_index().sort_values(["Length", "Sequence_Name", "Algorithm"])
     summary.to_csv(os.path.join(table_dir, "summary_table.csv"), index=False)
 
     energy_pivot = df.pivot_table(index="Sequence_Name", columns="Algorithm", values="Best_Energy", aggfunc="mean")

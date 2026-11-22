@@ -1,0 +1,6 @@
+Sequence_Name,Beam_v2,GA_v2,Hill_Climbing,Hybrid_Beam_SA,REMC_Numba,SA_v2
+20_Benchmark,5.0,5.0,5.0,5.0,5.0,5.0
+24_Benchmark,5.0,4.0,0.0,5.0,5.0,5.0
+36_Benchmark,0.0,0.0,0.0,0.0,5.0,1.0
+48_Benchmark,0.0,0.0,0.0,0.0,5.0,0.0
+50_Benchmark,0.0,0.0,0.0,0.0,5.0,3.0

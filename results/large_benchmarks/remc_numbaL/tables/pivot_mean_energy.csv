@@ -1,0 +1,6 @@
+Sequence_Name,Hill_Climbing,Beam_v2,GA_v2,Hybrid_Beam_SA,REMC_Numba,SA_v2
+60_Benchmark,-26.4,-36.0,-31.2,-36.0,-35.8,-34.2
+64_Benchmark,-25.8,-36.0,-32.0,-36.4,-42.0,-37.0
+85_Benchmark,-36.6,-52.0,-42.8,-52.0,-52.0,-48.0
+100a_Benchmark,-33.0,-46.0,-37.2,-46.0,-48.8,-45.0
+100b_Benchmark,-31.6,-46.0,-37.0,-45.6,-47.2,-43.2

@@ -395,8 +395,8 @@ def _warmup():
     _WARMED_UP = True
 
 
-def remc_numba(hp, time_limit=5.0, seed=None, n_replicas=16, t_min=0.16, t_max=2.20,
-               swap_interval=200, chunk_sweeps=1500):
+def remc_numba(hp, time_limit=5.0, seed=None, n_replicas=20, t_min=0.14, t_max=2.20,
+               swap_interval=100, chunk_sweeps=1500):
     _warmup()
     n = len(hp)
     start = time.perf_counter()
